@@ -9,16 +9,19 @@ class InputBox extends React.Component {
   }
 
   componentDidMount() {
-    let store = new TodoStore((val) => { React.render(<TodoList todos={val}/>, child)});
+    const store = new TodoStore((val) => { React.render(<TodoList todos={val}/>, child)});
 
     const todoInput = document.getElementById('todoInput');
-    const newTodo = Rx.Observable.fromEvent(todoInput, 'change');
-
     const child = document.getElementById('appendhere');
+    const newTodo = Rx.Observable.fromEvent(todoInput, 'change');
+    const resetInput = new Rx.Subject();
+
+    resetInput.map( val => { return ""; }).subscribe( v => { todoInput.value = v; });
 
     newTodo.subscribe( e => {
-      store.add.onNext(this.getStrValue(e));
-      todoInput.value = '';
+      let nextTodo = this.getStrValue(e);
+      store.add.onNext(nextTodo);
+      resetInput.onNext(nextTodo);
     });
   }
 

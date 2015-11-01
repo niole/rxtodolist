@@ -18939,13 +18939,21 @@
 	      });
 
 	      var todoInput = document.getElementById('todoInput');
-	      var newTodo = Rx.Observable.fromEvent(todoInput, 'change');
-
 	      var child = document.getElementById('appendhere');
+	      var newTodo = Rx.Observable.fromEvent(todoInput, 'change');
+	      var resetInput = new Rx.Subject();
+
+	      resetInput.map(function (val) {
+	        return "";
+	      }).subscribe(function (v) {
+	        todoInput.value = v;
+	      });
 
 	      newTodo.subscribe(function (e) {
-	        store.add.onNext(_this.getStrValue(e));
-	        todoInput.value = '';
+	        var nextTodo = _this.getStrValue(e);
+	        store.add.onNext(nextTodo);
+	        //todoInput.value = '';
+	        resetInput.onNext(nextTodo);
 	      });
 	    }
 	  }, {
