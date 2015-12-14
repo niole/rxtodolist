@@ -6,14 +6,18 @@ const React = require('react');
 class InputBox extends React.Component {
   constructor(props) {
     super(props);
+      this.state = { todos: [] };
   }
 
   componentDidMount() {
-    const store = new TodoStore((val) => { React.render(<TodoList todos={val}/>, child)});
+    const store = new TodoStore((val) => { this.updateTodos(val) });
 
     const todoInput = document.getElementById('todoInput');
+
     const child = document.getElementById('appendhere');
+
     const newTodo = Rx.Observable.fromEvent(todoInput, 'change');
+
     const resetInput = new Rx.Subject();
 
     resetInput.map( val => { return ""; }).subscribe( v => { todoInput.value = v; });
@@ -25,6 +29,10 @@ class InputBox extends React.Component {
     });
   }
 
+  updateTodos(todos) {
+      this.setState({ todos: todos });
+  }
+
   getStrValue(event) {
     event.preventDefault();
     return event.target.value;
@@ -34,7 +42,7 @@ class InputBox extends React.Component {
     return (
       <div>
         <input id='todoInput' type='text' placeholder='input something'/>
-        <div id="appendhere"/>
+        <TodoList todos={this.state.todos}/>
       </div>
     );
   }

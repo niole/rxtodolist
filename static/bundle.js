@@ -18927,6 +18927,7 @@
 	    _classCallCheck(this, InputBox);
 
 	    _get(Object.getPrototypeOf(InputBox.prototype), 'constructor', this).call(this, props);
+	    this.state = { todos: [] };
 	  }
 
 	  _createClass(InputBox, [{
@@ -18935,7 +18936,7 @@
 	      var _this = this;
 
 	      var store = new TodoStore(function (val) {
-	        React.render(React.createElement(TodoList, { todos: val }), child);
+	        _this.updateTodos(val);
 	      });
 
 	      var todoInput = document.getElementById('todoInput');
@@ -18952,9 +18953,13 @@
 	      newTodo.subscribe(function (e) {
 	        var nextTodo = _this.getStrValue(e);
 	        store.add.onNext(nextTodo);
-	        //todoInput.value = '';
 	        resetInput.onNext(nextTodo);
 	      });
+	    }
+	  }, {
+	    key: 'updateTodos',
+	    value: function updateTodos(todos) {
+	      this.setState({ todos: todos });
 	    }
 	  }, {
 	    key: 'getStrValue',
@@ -18965,11 +18970,12 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      console.log(this.state.todos);
 	      return React.createElement(
 	        'div',
 	        null,
 	        React.createElement('input', { id: 'todoInput', type: 'text', placeholder: 'input something' }),
-	        React.createElement('div', { id: 'appendhere' })
+	        React.createElement(TodoList, { todos: this.state.todos })
 	      );
 	    }
 	  }]);
@@ -19097,7 +19103,11 @@
 	  _classCallCheck(this, TodoStore);
 
 	  this.store = [];
+
+	  this.savedLists = [];
+
 	  this.add = new Rx.Subject();
+
 	  this.add.map(function (value) {
 	    _this.store.push(value);
 	    return _this.store;
